@@ -7,21 +7,32 @@ module.exports = {
         if (priority === 'baixa') {
             color = 'green';
         } else if (priority === 'media') {
-            color = ''
+            color = 'yellow';
+        } else if (priority === 'alta') {
+            color = 'red';
         }
-
-        let task = {id: ++ids, name: name, priority: priority};
+        let task = {id: ++ids, name: name, priority: priority, color: color};
         tasks.push(task);
         return task;
     },
     update (id, name, priority) {
         let pos = this.getPositionById(id)
+        let color = '';
+        if (priority === 'baixa') {
+            color = 'green';
+        } else if (priority === 'media') {
+            color = 'yellow';
+        } else if (priority === 'alta') {
+            color = 'red';
+        }
         if (pos >= 0) {
             tasks[pos].name = name;
             tasks[pos].priority = priority;
+            tasks[pos].color = color;
         }
     },
     list() {
+        // console.log(tasks)
         return tasks;
     },
     getElementById(id) {
@@ -46,5 +57,21 @@ module.exports = {
             return true;
         }
         return false; 
+    },
+    listAToZ() {
+        return tasks.sort((a, b) => {
+            const name1 = a.name.toLowerCase();
+            const name2 = b.name.toLowerCase();
+            if (name1 < name2) {
+              return -1;
+            }
+            if (name1 > name2) {
+              return 1;
+            }
+            return 0;
+        });
+    },
+    getLength() {
+        return tasks.length;
     }
 }

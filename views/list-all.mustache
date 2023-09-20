@@ -11,44 +11,14 @@
     <title>TODO APP</title>
   </head>
   <body>
-    <h1>TODO APP</h1>
-    <h2>Tarefas</h2>
+    <h1>LIST</h1>
+
     <ul>
     {{#tasks}}
-        <li style="color: {{color}}; max-width: 300px">{{name}} <a href="/?tid={{id}}">edit</a> <a href="/tarefas/del/{{id}}">done</a></li>
+        <li style="color: {{color}}; max-width: 300px;"><a href="/tarefas/del/{{id}}" style="color: {{color}};">{{name}}</a></li>
     {{/tasks}}
     </ul>
     <p>{{msg}}</p>
-
-    <h2>Nova tarefa</h2>
-    <form action="/tarefas" method="POST" style="display:flex; flex-direction:column; max-width: 350px">
-        {{#task.id}}
-        <input type="hidden" name="id" value="{{.}}">
-        {{/task.id}}
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" value="{{task.name}}"/>
-        <div style="margin-top: 20px;">
-          <label for="prioridade">Prioridade:</label>
-
-          <label>
-             <input type="radio" id="baixa" name="prioridade" value="baixa"/>
-             Baixa
-          </label>
-         
-          <label for="nome">
-            <input type="radio" id="media" name="prioridade" value="media" checked/>
-            Media
-          </label>
-          
-          <label>
-            <input type="radio" id="alta" name="prioridade" value="alta"/>
-            Alta
-          </label>
-        </div>
-
-        <input type="submit" value="Salvar" class="btn-primary" style="margin-top:20px"/>
-    </form>
-    <p>{{erro}}</p>
 
     <!-- Optional JavaScript; choose one of the two! -->
 

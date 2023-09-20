@@ -7,20 +7,38 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if (Task.list().length == 0) {
-    Task.new("Tarefa 1");
-    Task.new("Tarefa 2");
+    res.render('index', { msg: "Nenhuma tarefa adicionada." });
+  } else {
+    let obj = Task.getElementById(req.query.tid);
+    res.render('index', { tasks: Task.list(), task: obj });
   }
-
-  let obj = Task.getElementById(req.query.tid);
-  res.render('index', { tasks: Task.list(), task: obj });
 });
 
+router.get('/list', function(req, res, next) {
+  if (Task.list().length == 0) {
+    res.render('list-all', { msg: "Nenhuma tarefa adicionada." });
+  } else {
+    let obj = Task.getElementById(req.query.tid);
+    res.render('list-all', { tasks: Task.listAToZ(), task: obj });
+  }
+});
+
+router.get('/length', function(req, res, next){
+  res.render('get-length', { length: Task.getLength()});
+})
+
 router.post("/tarefas", function (req, res){
-    const {error, value} = TaskSchema.validate(req.body);
-    if (error) {
-      res.render('index', { tasks: Task.list(), erro: "Dados incompletos" });
-      return;
-    }
+    // const {error, value} = TaskSchema.validate(req.body);
+    // if (error) {
+    //   if (Task.list().length == 0) {
+    //     res.render('index', { tasks: Task.list(), msg: "Nenhuma tarefa adicionada.", erro: "Dados incompletos" });
+    //   } else {
+    //     res.render('index', { tasks: Task.list(), erro: "Dados incompletos" });
+    //   }
+    //   return;
+    // }
+
+    const value = req.body;
     
     const {id, nome, prioridade} = value
     if (id === undefined) {
