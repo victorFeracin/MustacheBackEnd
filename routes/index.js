@@ -28,17 +28,15 @@ router.get('/length', function(req, res, next){
 })
 
 router.post("/tarefas", function (req, res){
-    // const {error, value} = TaskSchema.validate(req.body);
-    // if (error) {
-    //   if (Task.list().length == 0) {
-    //     res.render('index', { tasks: Task.list(), msg: "Nenhuma tarefa adicionada.", erro: "Dados incompletos" });
-    //   } else {
-    //     res.render('index', { tasks: Task.list(), erro: "Dados incompletos" });
-    //   }
-    //   return;
-    // }
-
-    const value = req.body;
+    const {error, value} = TaskSchema.validate(req.body);
+    if (error) {
+      if (Task.list().length == 0) {
+        res.render('index', { tasks: Task.list(), msg: "Nenhuma tarefa adicionada.", erro: `Dados incompletos: ${error}` });
+      } else {
+        res.render('index', { tasks: Task.list(), erro: `Dados incompletos: ${error}` });
+      }
+      return;
+    }
     
     const {id, nome, prioridade} = value
     if (id === undefined) {

@@ -9,7 +9,6 @@ const TaskSchema = Joi.object({
         .max(30)
         .required(),
     prioridade: Joi.string()
-        .valid('baixa', 'media', 'alta')
         .required(),
 }).with("id", "nome")
 
