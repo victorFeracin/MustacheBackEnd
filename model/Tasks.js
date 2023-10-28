@@ -1,8 +1,25 @@
-let ids = 0;
-let tasks = [];
+const {DataTypes, Op} = require("sequelize");
+const sequelize = require("../helpers/bd");
+
+const Tasks = sequelize.define('tarefas', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    nome: {
+        type: DataTypes.STRING
+    },
+    prioridade: {
+        type: DataTypes.STRING
+    },
+    color: {
+        type: DataTypes.STRING
+    },
+});
 
 module.exports = {
-    new(name, priority) {
+    new: async function (name, priority) {
         let color = '';
         if (priority === 'baixa') {
             color = 'green';
@@ -11,11 +28,11 @@ module.exports = {
         } else if (priority === 'alta') {
             color = 'red';
         }
-        let task = {id: ++ids, name: name, priority: priority, color: color};
+        let task = {name: name, priority: priority, color: color};
         tasks.push(task);
         return task;
     },
-    update (id, name, priority) {
+    update: async function (id, name, priority) {
         let pos = this.getPositionById(id)
         let color = '';
         if (priority === 'baixa') {
@@ -31,18 +48,18 @@ module.exports = {
             tasks[pos].color = color;
         }
     },
-    list() {
+    list: async function () {
         // console.log(tasks)
         return tasks;
     },
-    getElementById(id) {
+    getElementById: async function (id) {
         let pos = this.getPositionById(id)
         if (pos >= 0) {
             return tasks[pos];
         }
         return null;
     },
-    getPositionById(id) {
+    getPositionById: async function (id) {
         for (let i = 0; i<tasks.length; i++) {
             if (tasks[i].id == id) {
                 return i;
@@ -50,7 +67,7 @@ module.exports = {
         }
         return -1;
     },
-    delete(id) {
+    delete: async function (id) {
         let i = this.getPositionById(id);
         if (i >= 0) {
             tasks.splice(i, 1);
@@ -58,7 +75,7 @@ module.exports = {
         }
         return false; 
     },
-    listAToZ() {
+    listAToZ: async function () {
         return tasks.sort((a, b) => {
             const name1 = a.name.toLowerCase();
             const name2 = b.name.toLowerCase();
@@ -71,7 +88,7 @@ module.exports = {
             return 0;
         });
     },
-    getLength() {
+    getLength: async function () {
         return tasks.length;
     }
 }

@@ -10,6 +10,8 @@
     "express": "~4.16.1",
     "joi": "^17.6.0",
     "mustache-express": "^1.3.2",
-    "nodemon": "^2.0.13"
+    "mysql2": "^3.6.2",
+    "nodemon": "^2.0.13",
+    "sequelize": "^6.33.0"
   }
 }
