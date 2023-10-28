@@ -1,21 +1,28 @@
 var express = require('express');
 var Task = require("../model/Tasks")
 var TaskSchema = require("../validators/TaskValidator")
+const TasksControllerAPI = require('../controllers/TasksControllerAPI');
 const Joi = require("joi")
 var router = express.Router();
 
+/*API test (doesn't affect application interface*/
+router.get('/api', TasksControllerAPI.listAPI);
+router.post('/api', TasksControllerAPI.newAPI);
+router.put('/api/:id', TasksControllerAPI.updateAPI);
+router.delete('/api/:id', TasksControllerAPI.deleteAPI);
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  if (Task.list().length == 0) {
+router.get('/', async function(req, res, next) {
+  if (await Task.list().length == 0) {
     res.render('index', { msg: "Nenhuma tarefa adicionada." });
   } else {
     let obj = Task.getElementById(req.query.tid);
-    res.render('index', { tasks: Task.list(), task: obj });
+    res.render('index', { tasks: await Task.list(), task: obj });
   }
 });
 
 router.get('/list', function(req, res, next) {
-  if (Task.list().length == 0) {
+  if (Task.list().length === 0) {
     res.render('list-all', { msg: "Nenhuma tarefa adicionada." });
   } else {
     let obj = Task.getElementById(req.query.tid);
@@ -25,30 +32,44 @@ router.get('/list', function(req, res, next) {
 
 router.get('/length', function(req, res, next){
   res.render('get-length', { length: Task.getLength()});
-})
+});
 
-router.post("/tarefas", function (req, res){
+router.post("/tarefas", async function (req, res){
     const {error, value} = TaskSchema.validate(req.body);
     if (error) {
-      if (Task.list().length == 0) {
-        res.render('index', { tasks: Task.list(), msg: "Nenhuma tarefa adicionada.", erro: `Dados incompletos: ${error}` });
+      if (await Task.list().length === 0) {
+        res.render('index', { tasks: await Task.list(), msg: "Nenhuma tarefa adicionada.", erro: `Dados incompletos: ${error}` });
       } else {
-        res.render('index', { tasks: Task.list(), erro: `Dados incompletos: ${error}` });
+        res.render('index', { tasks: await Task.list(), erro: `Dados incompletos: ${error}` });
       }
       return;
     }
     
-    const {id, nome, prioridade} = value
-    if (id === undefined) {
-      //Inserir
-      Task.new(nome, prioridade);
-    } else {
-      //Alterar
-      Task.update(id, nome, prioridade);
-    }
-    
+    const { id, nome, prioridade } = value
+    await Task.new(nome, prioridade);
+
+
     res.redirect("/");
-})
+});
+
+router.put("/", async function (req, res){
+  const id = req.query.tid;
+  console.log("ID: " + id)
+  const {error, value} = TaskSchema.validate(req.body);
+  if(error) {
+    if (await Task.list().length === 0) {
+      res.render('index', { tasks: await Task.list(), msg: "Nenhuma tarefa adicionada.", erro: `Dados incompletos: ${error}` });
+    } else {
+      res.render('index', { tasks: await Task.list(), erro: `Dados incompletos: ${error}` });
+    }
+    return;
+  }
+
+  const { nome, prioridade } = value
+  await Task.update(id, nome, prioridade);
+
+  res.redirect("/");
+});
 
 router.get("/tarefas/del/:id", function(req, res){
   const {id} = req.params;
@@ -59,6 +80,6 @@ router.get("/tarefas/del/:id", function(req, res){
     return;
   }
   res.redirect("/");
-})
+});
 
 module.exports = router;

@@ -1,9 +1,9 @@
 const {DataTypes, Op} = require("sequelize");
 const sequelize = require("../helpers/bd");
 
-const Tasks = sequelize.define('tarefas', {
+const TasksModel = sequelize.define('Tarefas', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.ZEROFILL,
         autoIncrement: true,
         primaryKey: true,
     },
@@ -13,13 +13,15 @@ const Tasks = sequelize.define('tarefas', {
     prioridade: {
         type: DataTypes.STRING
     },
-    color: {
+    cor: {
         type: DataTypes.STRING
     },
 });
 
+let tasks = [];
+
 module.exports = {
-    new: async function (name, priority) {
+    async new(name, priority) {
         let color = '';
         if (priority === 'baixa') {
             color = 'green';
@@ -28,12 +30,12 @@ module.exports = {
         } else if (priority === 'alta') {
             color = 'red';
         }
-        let task = {name: name, priority: priority, color: color};
-        tasks.push(task);
-        return task;
+        let task = { nome: name, prioridade: priority, cor: color };
+        await TasksModel.create({...task});
+        // tasks.push(task);
+        // return task;
     },
-    update: async function (id, name, priority) {
-        let pos = this.getPositionById(id)
+    async update (id, name, priority) {
         let color = '';
         if (priority === 'baixa') {
             color = 'green';
@@ -42,24 +44,41 @@ module.exports = {
         } else if (priority === 'alta') {
             color = 'red';
         }
-        if (pos >= 0) {
-            tasks[pos].name = name;
-            tasks[pos].priority = priority;
-            tasks[pos].color = color;
-        }
+        let task = { nome: name, prioridade: priority, cor: color };
+        await TasksModel.update(
+            {...task},
+            {
+                where: {
+                    id
+                }
+            }
+        );
+        // tasks.push(task);
+        // return task;
     },
-    list: async function () {
-        // console.log(tasks)
+    async list() {
+        await sequelize.sync();
+        const tasksAux = await TasksModel.findAll();
+
+        const tasks = tasksAux.map(task => {
+          return {
+            id: task.id,
+            name: task.nome,
+            priority: task.prioridade,
+            color: task.cor,
+          };
+        });
+
         return tasks;
     },
-    getElementById: async function (id) {
+    getElementById(id) {
         let pos = this.getPositionById(id)
         if (pos >= 0) {
             return tasks[pos];
         }
         return null;
     },
-    getPositionById: async function (id) {
+    getPositionById(id) {
         for (let i = 0; i<tasks.length; i++) {
             if (tasks[i].id == id) {
                 return i;
@@ -67,7 +86,7 @@ module.exports = {
         }
         return -1;
     },
-    delete: async function (id) {
+    delete(id) {
         let i = this.getPositionById(id);
         if (i >= 0) {
             tasks.splice(i, 1);
@@ -75,7 +94,7 @@ module.exports = {
         }
         return false; 
     },
-    listAToZ: async function () {
+    listAToZ() {
         return tasks.sort((a, b) => {
             const name1 = a.name.toLowerCase();
             const name2 = b.name.toLowerCase();
@@ -88,7 +107,9 @@ module.exports = {
             return 0;
         });
     },
-    getLength: async function () {
+    getLength() {
         return tasks.length;
-    }
+    },
+
+    Model: TasksModel
 }
