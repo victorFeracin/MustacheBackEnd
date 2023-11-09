@@ -86,13 +86,17 @@ module.exports = {
         }
         return -1;
     },
-    delete(id) {
-        let i = this.getPositionById(id);
-        if (i >= 0) {
-            tasks.splice(i, 1);
+    async delete(id) {
+        try {
+            await TasksModel.destroy({
+                where: {
+                    id: id,
+                }
+            });
             return true;
+        } catch (err) {
+            return false;
         }
-        return false; 
     },
     listAToZ() {
         return tasks.sort((a, b) => {

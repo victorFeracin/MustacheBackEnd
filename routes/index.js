@@ -62,8 +62,8 @@ router.post("/tarefas", async function (req, res){
 });
 
 router.post("/edit", async function (req, res){
-  const id = req.query.tid;
-  console.log("ID edit: " + id)
+  // const id = req.query.tid;
+  // console.log("ID edit: " + id)
   const {error, value} = TaskSchema.validate(req.body);
   if(error) {
     if (await Task.list().length === 0) {
@@ -74,7 +74,7 @@ router.post("/edit", async function (req, res){
     return;
   }
 
-  const { nome, prioridade } = value
+  const { id, nome, prioridade } = value
   await Task.update(id, nome, prioridade);
 
   res.redirect("/");
