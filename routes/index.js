@@ -21,6 +21,15 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+router.get('/edit', async function(req, res, next) {
+  if (await Task.list().length == 0) {
+    res.render('index-edit', { msg: "Nenhuma tarefa adicionada." });
+  } else {
+    let obj = Task.getElementById(req.query.tid);
+    res.render('index-edit', { tasks: await Task.list(), task: obj });
+  }
+});
+
 router.get('/list', function(req, res, next) {
   if (Task.list().length === 0) {
     res.render('list-all', { msg: "Nenhuma tarefa adicionada." });
@@ -52,9 +61,9 @@ router.post("/tarefas", async function (req, res){
     res.redirect("/");
 });
 
-router.put("/", async function (req, res){
+router.post("/edit", async function (req, res){
   const id = req.query.tid;
-  console.log("ID: " + id)
+  console.log("ID edit: " + id)
   const {error, value} = TaskSchema.validate(req.body);
   if(error) {
     if (await Task.list().length === 0) {

@@ -60,7 +60,7 @@ module.exports = {
         await sequelize.sync();
         const tasksAux = await TasksModel.findAll();
 
-        const tasks = tasksAux.map(task => {
+        tasks = tasksAux.map(task => {
           return {
             id: task.id,
             name: task.nome,

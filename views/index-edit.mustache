@@ -11,7 +11,7 @@
     <title>TODO APP</title>
   </head>
   <body>
-    <h1>TODO APP</h1>
+    <h1>TODO APP 2</h1>
     <h2>Tarefas</h2>
     <ul>
     {{#tasks}}
@@ -21,7 +21,7 @@
     <p>{{msg}}</p>
 
     <h2>Nova tarefa</h2>
-    <form action="/tarefas" method="POST" style="display:flex; flex-direction:column; max-width: 350px">
+    <form action="/edit" method="POST" style="display:flex; flex-direction:column; max-width: 350px">
         {{#task.id}}
         <input type="hidden" name="id" value="{{.}}">
         {{/task.id}}
